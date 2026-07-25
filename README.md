@@ -10,8 +10,12 @@ or perform server-side token verification.
 ## Install
 
 ```bash
-pnpm add @meltero/turnstile-react
+pnpm add https://github.com/Meltero/turnstile-react/releases/download/v1.0.0/meltero-turnstile-react-1.0.0.tgz
 ```
+
+Release assets are versioned package tarballs built by this repository's
+release workflow. Pin the exact release URL and commit your lockfile so installs
+remain reproducible and integrity-checked.
 
 ## Use
 

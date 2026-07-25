@@ -1,4 +1,4 @@
-name: Publish
+name: Release
 
 on:
   push:
@@ -6,13 +6,11 @@ on:
       - 'v*'
 
 permissions:
-  contents: read
-  id-token: write
+  contents: write
 
 jobs:
-  publish:
+  release:
     runs-on: ubuntu-latest
-    environment: npm
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6
@@ -20,11 +18,17 @@ jobs:
         with:
           node-version: 22.23.1
           cache: pnpm
-          registry-url: https://registry.npmjs.org
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
       - run: pnpm lint
       - run: pnpm test
       - run: pnpm build
-      - run: npm install --global npm@11.5.1
-      - run: npm publish --access public
+      - name: Verify tag matches package version
+        run: |
+          package_version="$(node -p "require('./package.json').version")"
+          test "$GITHUB_REF_NAME" = "v${package_version}"
+      - run: npm pack
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" ./*.tgz --generate-notes --verify-tag
