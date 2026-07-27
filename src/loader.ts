@@ -6,13 +6,13 @@ export const TURNSTILE_SCRIPT_SRC =
 
 let loaderPromise: Promise<TurnstileApi> | undefined;
 
-function resolveWhenReady(resolve: (api: TurnstileApi) => void, reject: (error: Error) => void) {
+function resolveLoadedApi(resolve: (api: TurnstileApi) => void, reject: (error: Error) => void) {
   const api = window.turnstile;
   if (!api) {
     reject(new Error('Cloudflare Turnstile loaded without exposing its client API.'));
     return;
   }
-  api.ready(() => resolve(api));
+  resolve(api);
 }
 
 export function loadTurnstile(options: TurnstileScriptOptions = {}): Promise<TurnstileApi> {
@@ -21,7 +21,7 @@ export function loadTurnstile(options: TurnstileScriptOptions = {}): Promise<Tur
   }
 
   if (window.turnstile) {
-    return new Promise((resolve) => window.turnstile?.ready(() => resolve(window.turnstile!)));
+    return Promise.resolve(window.turnstile);
   }
 
   if (loaderPromise) return loaderPromise;
@@ -41,7 +41,7 @@ export function loadTurnstile(options: TurnstileScriptOptions = {}): Promise<Tur
         fail();
         return;
       }
-      existing.addEventListener('load', () => resolveWhenReady(resolve, fail), { once: true });
+      existing.addEventListener('load', () => resolveLoadedApi(resolve, fail), { once: true });
       existing.addEventListener('error', fail, { once: true });
       return;
     }
@@ -52,7 +52,7 @@ export function loadTurnstile(options: TurnstileScriptOptions = {}): Promise<Tur
     script.async = true;
     script.defer = true;
     if (options.nonce) script.nonce = options.nonce;
-    script.addEventListener('load', () => resolveWhenReady(resolve, fail), { once: true });
+    script.addEventListener('load', () => resolveLoadedApi(resolve, fail), { once: true });
     script.addEventListener('error', fail, { once: true });
     (options.appendTo === 'body' ? document.body : document.head).append(script);
   });

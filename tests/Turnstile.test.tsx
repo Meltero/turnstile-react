@@ -16,7 +16,7 @@ import type {
 function installApi() {
   let capturedOptions: TurnstileRenderOptions | undefined;
   const api: TurnstileApi = {
-    ready: (callback) => callback(),
+    ready: vi.fn((callback: () => void) => callback()),
     render: vi.fn(
       (_container: HTMLElement | string, options: TurnstileRenderOptions) => {
         capturedOptions = options;
@@ -65,6 +65,7 @@ describe('Turnstile', () => {
 
     const { api } = await finishScriptLoad();
     await waitFor(() => expect(api.render).toHaveBeenCalledTimes(2));
+    expect(api.ready).not.toHaveBeenCalled();
   });
 
   it('maps generic options and forwards lifecycle callbacks', async () => {

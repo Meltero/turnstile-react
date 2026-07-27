@@ -1,6 +1,6 @@
 {
   "name": "@meltero/turnstile-react",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A small, typed React wrapper for Cloudflare Turnstile's official client-side API.",
   "license": "MIT",
   "type": "module",

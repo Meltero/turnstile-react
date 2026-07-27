@@ -10,7 +10,7 @@ or perform server-side token verification.
 ## Install
 
 ```bash
-pnpm add github:Meltero/turnstile-react#v1.0.1
+pnpm add github:Meltero/turnstile-react#v1.0.2
 ```
 
 The Git tag pins the public repository version, and the package's `prepare`
